@@ -35,28 +35,48 @@ namespace WebApi.Comuni.Controllers
         [HttpGet("FindComune/{comune}")]
         public async Task<IActionResult> GetLocationFromComune(string comune)
         {
+            if (comune == null)
+            {
+                return BadRequest();
+            }
+
             var entities = await locationService.GetLocationAsync(comune);
+            
             if (entities == null)
             {
                 return NotFound();
             }
-
-            return Ok(entities);
+            else
+            {
+                return Ok(entities);
+            }
         }
 
         [HttpGet("FindCap/{cap}")]
         public async Task<IActionResult> GetLocationFromCap(string cap)
         {
+            if (cap == null)
+            {
+                return BadRequest();
+            }
+
             var entities = await locationService.GetCapAsync(cap);
 
-            return Ok(entities.Select(location => new LocationViewModel
+            if (entities == null)
             {
-                Comune = location.Comune,
-                Cap = location.Cap,
-                Provincia = location.Provincia,
-                Regione = location.Regione,
-                ComuneId = location.ComuneId,
-            }));
+                return NotFound();
+            }
+            else
+            {
+                return Ok(entities.Select(location => new LocationViewModel
+                {
+                    Comune = location.Comune,
+                    Cap = location.Cap,
+                    Provincia = location.Provincia,
+                    Regione = location.Regione,
+                    ComuneId = location.ComuneId,
+                }));
+            }
         }
     }
 }
