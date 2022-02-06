@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Comuni.Models.Extensions;
+using WebApi.Comuni.Models.InputModels;
 using WebApi.Comuni.Models.Services.Infrastructure;
 using WebApi.Comuni.Models.ViewModels;
 
@@ -38,11 +39,11 @@ namespace WebApi.Comuni.Models.Services.Application
         //     return lista;
         // }
 
-        public async Task<LocationViewModel> GetLocationAsync(string location)
+        public async Task<LocationViewModel> GetLocationAsync(ComuneInputModel model)
         {
             IQueryable<LocationViewModel> queryLinq = dbContext.Locations
                 .AsNoTracking()
-                .Where(comune => comune.Comune == location)
+                .Where(comune => comune.Comune == model.Comune)
                 .Select(comune => comune.ToLocationViewModel());
 
             LocationViewModel viewModel = await queryLinq.FirstOrDefaultAsync();
@@ -50,10 +51,10 @@ namespace WebApi.Comuni.Models.Services.Application
             return viewModel;
         }
 
-        public async Task<List<LocationViewModel>> GetCapAsync(string cap)
+        public async Task<List<LocationViewModel>> GetCapAsync(CapInputModel model)
         {
             var locations = await dbContext.Locations
-                .Where(comune => comune.Cap == cap)
+                .Where(comune => comune.Cap == model.Cap)
                 .ToListAsync();
 
             List<LocationViewModel> lista = new();

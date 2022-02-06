@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Comuni.Models.InputModels;
 using WebApi.Comuni.Models.Services.Application;
 using WebApi.Comuni.Models.ViewModels;
 
@@ -32,15 +33,15 @@ namespace WebApi.Comuni.Controllers
         //     }));
         // }
 
-        [HttpGet("FindComune/{comune}")]
-        public async Task<IActionResult> GetLocationFromComune(string comune)
+        [HttpGet("FindComune")]
+        public async Task<IActionResult> GetLocationFromComune([FromQuery] ComuneInputModel model)
         {
-            if (comune == null)
+            if (model == null)
             {
                 return BadRequest();
             }
 
-            var entities = await locationService.GetLocationAsync(comune);
+            var entities = await locationService.GetLocationAsync(model);
             
             if (entities == null)
             {
@@ -52,17 +53,17 @@ namespace WebApi.Comuni.Controllers
             }
         }
 
-        [HttpGet("FindCap/{cap}")]
-        public async Task<IActionResult> GetLocationFromCap(string cap)
+        [HttpGet("FindCap")]
+        public async Task<IActionResult> GetLocationFromCap([FromQuery] CapInputModel model)
         {
-            if (cap == null)
+            if (model == null)
             {
                 return BadRequest();
             }
 
-            var entities = await locationService.GetCapAsync(cap);
+            var entities = await locationService.GetCapAsync(model);
 
-            if (entities == null)
+            if (entities.Count == 0)
             {
                 return NotFound();
             }
