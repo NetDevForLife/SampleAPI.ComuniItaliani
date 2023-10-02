@@ -1,20 +1,19 @@
 using WebApi.Comuni.Models.Entities;
 using WebApi.Comuni.Models.ViewModels;
 
-namespace WebApi.Comuni.Models.Extensions
+namespace WebApi.Comuni.Models.Extensions;
+
+public static class LocationExtension
 {
-    public static class LocationExtension
+    public static LocationViewModel ToLocationViewModel(this Location location)
     {
-        public static LocationViewModel ToLocationViewModel(this Location location)
+        return new LocationViewModel
         {
-            return new LocationViewModel
-            {
-                ComuneId = location.ComuneId,
-                Comune = location.Comune,
-                Cap = location.Cap,
-                Provincia = location.Provincia,
-                Regione = location.Regione
-            };
-        }
+            ComuneId = location.ComuneId,
+            Comune = location.Comune,
+            Cap = location.Cap,
+            Provincia = location.Provincia,
+            Regione = location.Regione
+        };
     }
 }
