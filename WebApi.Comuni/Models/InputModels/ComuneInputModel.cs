@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Comuni.Models.InputModels
+namespace WebApi.Comuni.Models.InputModels;
+
+public class ComuneInputModel
 {
-    public class ComuneInputModel
-    {
-        [Required]
-        public string Comune { get; set; }
-    }
+    [Required]
+    public string Comune { get; set; }
 }

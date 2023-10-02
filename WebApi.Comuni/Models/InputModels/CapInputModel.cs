@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Comuni.Models.InputModels
+namespace WebApi.Comuni.Models.InputModels;
+
+public class CapInputModel
 {
-    public class CapInputModel
-    {
-        [Required]
-        public string Cap { get; set; }
-    }
+    [Required]
+    public string Cap { get; set; }
 }
