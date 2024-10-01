@@ -1,73 +1,62 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using WebApi.Comuni.Models.InputModels;
-using WebApi.Comuni.Models.Services.Application;
-using WebApi.Comuni.Models.ViewModels;
+﻿namespace WebApi.Comuni.Controllers;
 
-namespace WebApi.Comuni.Controllers;
-
-[Route("api/[controller]")]
 [ApiController]
-public class LocationController : Controller
+[Route("api/[controller]")]
+[ProducesResponseType((int)HttpStatusCode.NotFound)]
+public class LocationController(ILocationService locationService) : Controller
 {
-    private readonly ILocationService locationService;
+	private readonly ILocationService locationService = locationService;
 
-    public LocationController(ILocationService locationService)
-    {
-        this.locationService = locationService;
-    }
+	[HttpGet]
+	[ProducesResponseType<List<LocationViewModel>>((int)HttpStatusCode.OK)]
+	public async Task<Results<Ok<List<LocationViewModel>>, NotFound>> GetLocations()
+	{
+		var entities = await locationService.GetLocationsAsync();
 
-    // [HttpGet]
-    // public async Task<IActionResult> GetLocations()
-    // {
-    //     var entities = await locationService.GetLocationsAsync();
+		if (entities.Count == 0)
+		{
+			return TypedResults.NotFound();
+		}
 
-    //     return Ok(entities.Select(location => new LocationViewModel
-    //     {
-    //         Comune = location.Comune,
-    //         Cap = location.Cap,
-    //         Provincia = location.Provincia,
-    //         Regione = location.Regione,
-    //         ComuneId = location.ComuneId,
-    //     }));
-    // }
+		return TypedResults.Ok(entities.Select(location => new LocationViewModel(location.ComuneId,
+			location.Comune, location.Cap, location.Provincia, location.Regione)).ToList());
+	}
 
-    [HttpGet("FindComune")]
-    public async Task<IActionResult> GetLocationFromComune([FromQuery] ComuneInputModel model)
-    {
-        if (model == null) return BadRequest();
+	[HttpGet("FindComune")]
+	[ProducesResponseType<LocationViewModel>((int)HttpStatusCode.OK)]
+	[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+	public async Task<IResult> GetLocationFromComune([FromQuery] ComuneInputModel model)
+	{
+		if (model == null) return TypedResults.BadRequest();
 
-        var entities = await locationService.GetLocationAsync(model);
+		var entities = await locationService.GetLocationAsync(model);
 
-        return entities switch
-        {
-            null => NotFound(),
-            _ => Ok(entities)
-        };
-    }
+		if (entities is null)
+		{
+			return TypedResults.NotFound();
+		}
 
-    [HttpGet("FindCap")]
-    public async Task<IActionResult> GetLocationFromCap([FromQuery] CapInputModel model)
-    {
-        if (model == null) return BadRequest();
+		return TypedResults.Ok(entities);
+	}
 
-        var entities = await locationService.GetCapAsync(model);
+	[HttpGet("FindCap")]
+	[ProducesResponseType<List<LocationViewModel>>((int)HttpStatusCode.OK)]
+	[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+	public async Task<Results<Ok<List<LocationViewModel>>, NotFound, BadRequest>> GetLocationFromCap([FromQuery] CapInputModel model)
+	{
+		if (model == null)
+		{
+			return TypedResults.BadRequest();
+		}
 
-        if (entities.Count == 0)
-        {
-            return NotFound();
-        }
-        else
-        {
-            return Ok(entities.Select(location => new LocationViewModel
-            {
-                Comune = location.Comune,
-                Cap = location.Cap,
-                Provincia = location.Provincia,
-                Regione = location.Regione,
-                ComuneId = location.ComuneId,
-            }));
-        }
-    }
+		var entities = await locationService.GetCapAsync(model);
+
+		if (entities.Count == 0)
+		{
+			return TypedResults.NotFound();
+		}
+
+		return TypedResults.Ok(entities.Select(location => new LocationViewModel(location.ComuneId,
+			location.Comune, location.Cap, location.Provincia, location.Regione)).ToList());
+	}
 }

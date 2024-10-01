@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Comuni", "WebApi.Comuni.csproj", "{A6D923E3-E563-4DDE-BCC8-1C0ED92CB0C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Comuni", "WebApi.Comuni\WebApi.Comuni.csproj", "{FED1F8C7-FF34-4934-972C-893C1A57985B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A6D923E3-E563-4DDE-BCC8-1C0ED92CB0C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6D923E3-E563-4DDE-BCC8-1C0ED92CB0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6D923E3-E563-4DDE-BCC8-1C0ED92CB0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6D923E3-E563-4DDE-BCC8-1C0ED92CB0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FED1F8C7-FF34-4934-972C-893C1A57985B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED1F8C7-FF34-4934-972C-893C1A57985B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED1F8C7-FF34-4934-972C-893C1A57985B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED1F8C7-FF34-4934-972C-893C1A57985B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
