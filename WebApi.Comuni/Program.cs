@@ -6,12 +6,19 @@ public class Program
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
-		builder.Services.AddControllers();
-		builder.Services.AddSwaggerGen(c =>
+		builder.Services.ConfigureHttpJsonOptions(options =>
 		{
-			c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi.Comuni", Version = "v1" });
+			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
+		builder.Services.AddEndpointsApiExplorer();
+		builder.Services.AddSwaggerGen(options =>
+		{
+			options.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi.Comuni", Version = "v1" });
+			options.OperationFilter<MissingSchemasOperationFilter>();
+		});
+
+		builder.Services.AddTransient<ILocationService, EfCoreLocationService>();
 		builder.Services.AddDbContextPool<ApplicationDbContext>(optionsBuilder =>
 		{
 			string connectionString = builder.Configuration.GetSection("ConnectionStrings").GetValue<string>("Default");
@@ -21,23 +28,21 @@ public class Program
 				// Per informazioni consultare la pagina: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
 				// options.EnableRetryOnFailure(3);
 			});
-		})
-			.AddTransient<ILocationService, EfCoreLocationService>()
-			.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+		});
 
 		var app = builder.Build();
 
 		if (app.Environment.IsDevelopment())
 		{
-			app.UseDeveloperExceptionPage()
-				.UseSwagger()
-				.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi.Comuni v1"));
+			app.UseDeveloperExceptionPage();
 		}
 
-		app.UseHttpsRedirection();
-		app.UseRouting();
+		app.UseSwagger();
+		app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi.Comuni v1"));
 
-		app.MapControllers();
+		app.UseHttpsRedirection();
+		app.MapEndpoints<ComuniEndpoints>();
+
 		app.Run();
 	}
 }
