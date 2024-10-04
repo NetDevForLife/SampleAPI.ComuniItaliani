@@ -5,53 +5,60 @@ public class ComuniEndpoints : IEndpointRouteHandler
 	public static void MapEndpoints(IEndpointRouteBuilder endpoints)
 	{
 		var comuniApiGroup = endpoints
-		.MapGroup("/api/comuni");
+			.MapGroup("/api/comuni")
+			.WithOpenApi();
 
-		comuniApiGroup.MapGet(string.Empty, async Task<Results<Ok<List<LocationViewModel>>, NotFound>> (ILocationService locationService) =>
+		comuniApiGroup.MapGet(string.Empty, GetLocations);
+
+		comuniApiGroup.MapGet("comune", GetLocationFromComune);
+
+		comuniApiGroup.MapGet("cap", GetLocationsFromCap);
+	}
+
+	public static async Task<Results<Ok<List<LocationViewModel>>, NotFound>> GetLocations(ILocationService locationService)
+	{
+		var entities = await locationService.GetLocationsAsync();
+
+		if (entities.Count == 0)
 		{
-			var entities = await locationService.GetLocationsAsync();
+			return TypedResults.NotFound();
+		}
 
-			if (entities.Count == 0)
-			{
-				return TypedResults.NotFound();
-			}
+		return TypedResults.Ok(entities.Select(location => new
+		LocationViewModel(location.ComuneId, location.Comune, location.Cap, location.Provincia, location.Regione)).ToList());
+	}
 
-			return TypedResults.Ok(entities.Select(location => new
-			LocationViewModel(location.ComuneId, location.Comune, location.Cap, location.Provincia, location.Regione)).ToList());
-		});
+	public static async Task<Results<Ok<LocationViewModel>, NotFound, BadRequest>> GetLocationFromComune([AsParameters] ComuneInputModel request,
+			ILocationService locationService)
+	{
+		if (request == null) return TypedResults.BadRequest();
 
-		comuniApiGroup.MapGet("comune", async Task<Results<Ok<LocationViewModel>, NotFound, BadRequest>> ([AsParameters] ComuneInputModel request,
-			ILocationService locationService) =>
+		var entities = await locationService.GetLocationAsync(request);
+
+		if (entities is null)
 		{
-			if (request == null) return TypedResults.BadRequest();
+			return TypedResults.NotFound();
+		}
 
-			var entities = await locationService.GetLocationAsync(request);
+		return TypedResults.Ok(entities);
+	}
 
-			if (entities is null)
-			{
-				return TypedResults.NotFound();
-			}
-
-			return TypedResults.Ok(entities);
-		});
-
-		comuniApiGroup.MapGet("cap", async Task<Results<Ok<List<LocationViewModel>>, NotFound, BadRequest>> ([AsParameters] CapInputModel request,
-			ILocationService locationService) =>
+	public static async Task<Results<Ok<List<LocationViewModel>>, NotFound, BadRequest>> GetLocationsFromCap([AsParameters] CapInputModel request,
+			ILocationService locationService)
+	{
+		if (request == null)
 		{
-			if (request == null)
-			{
-				return TypedResults.BadRequest();
-			}
+			return TypedResults.BadRequest();
+		}
 
-			var entities = await locationService.GetCapAsync(request);
+		var entities = await locationService.GetCapAsync(request);
 
-			if (entities.Count == 0)
-			{
-				return TypedResults.NotFound();
-			}
+		if (entities.Count == 0)
+		{
+			return TypedResults.NotFound();
+		}
 
-			return TypedResults.Ok(entities.Select(location => new
-			LocationViewModel(location.ComuneId, location.Comune, location.Cap, location.Provincia, location.Regione)).ToList());
-		});
+		return TypedResults.Ok(entities.Select(location => new
+		LocationViewModel(location.ComuneId, location.Comune, location.Cap, location.Provincia, location.Regione)).ToList());
 	}
 }
